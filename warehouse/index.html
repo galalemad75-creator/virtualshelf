@@ -405,8 +405,8 @@ const SoundAlert = {
   }
 };
 
-// Demo: play new order sound every 30 seconds
-setInterval(() => {
+// Demo: play new order sound on order click (simulating incoming)
+function onNewOrderReceived() {
   SoundAlert.play('new-order');
   // Flash the badge
   const badge = document.querySelector('.new-badge');
@@ -414,7 +414,14 @@ setInterval(() => {
     badge.style.transform = 'scale(1.2)';
     setTimeout(() => badge.style.transform = 'scale(1)', 300);
   }
-}, 30000);
+}
+
+// Play sound when opening a new order
+const origOpenOrder = openOrder;
+openOrder = function(i) {
+  if (i === 0) SoundAlert.play('new-order'); // First order is "new"
+  origOpenOrder(i);
+};
 
 // Play initial sound on first user interaction (unlock audio)
 document.addEventListener('click', function initSound() {

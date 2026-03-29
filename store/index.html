@@ -376,10 +376,10 @@ const SoundAlert = {
   }
 };
 
-// Demo: low stock alert every 45 seconds
-setInterval(() => {
+// Play sound only when low stock item is interacted with
+function onLowStockAlert() {
   SoundAlert.play('low-stock');
-}, 45000);
+}
 
 document.addEventListener('click', function initSound() {
   SoundAlert.init();
