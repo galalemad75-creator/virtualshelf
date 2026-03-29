@@ -345,6 +345,82 @@ function simulateScan(){
     showScreen('screen-orders');
   },2500);
 }
+
+// ===== SOUND ALERT SYSTEM =====
+const SoundAlert = {
+  ctx: null,
+  init() {
+    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  },
+  // Play a notification chime
+  play(type) {
+    this.init();
+    const ctx = this.ctx;
+    const now = ctx.currentTime;
+    
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    if (type === 'new-order') {
+      // Ascending chime - new order!
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, now);      // C5
+      osc.frequency.setValueAtTime(659, now + 0.15); // E5
+      osc.frequency.setValueAtTime(784, now + 0.3);  // G5
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      osc.start(now);
+      osc.stop(now + 0.5);
+    } else if (type === 'alert') {
+      // Warning beep
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(880, now);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+      // Second beep
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(880, now + 0.3);
+      gain2.gain.setValueAtTime(0.15, now + 0.3);
+      gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      osc2.start(now + 0.3);
+      osc2.stop(now + 0.5);
+    } else if (type === 'success') {
+      // Pleasant confirmation
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, now);
+      osc.frequency.setValueAtTime(784, now + 0.1);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    }
+  }
+};
+
+// Demo: play new order sound every 30 seconds
+setInterval(() => {
+  SoundAlert.play('new-order');
+  // Flash the badge
+  const badge = document.querySelector('.new-badge');
+  if (badge) {
+    badge.style.transform = 'scale(1.2)';
+    setTimeout(() => badge.style.transform = 'scale(1)', 300);
+  }
+}, 30000);
+
+// Play initial sound on first user interaction (unlock audio)
+document.addEventListener('click', function initSound() {
+  SoundAlert.init();
+  document.removeEventListener('click', initSound);
+}, { once: true });
 </script>
 <script src="../auth.js"></script>
 <script>VS_AUTH.enforce(); VS_AUTH.updateUI();</script>
