@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtualShelf — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--card:#161B22;--card-border:#21262D;
+  --purple:#7C3AED;--purple-hover:#6D28D9;--purple-light:rgba(124,58,237,.15);
+  --blue:#00D4FF;--green:#10B981;--red:#EF4444;--orange:#F97316;
+  --white:#F0F6FC;--gray:#8B949E;--light-gray:#30363D;
+  --radius:14px;--radius-sm:10px;--radius-pill:50px;
+  --font:'Inter',system-ui,sans-serif;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--white)}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+
+.login-container{width:100%;max-width:420px}
+
+/* Logo */
+.logo{text-align:center;margin-bottom:40px}
+.logo h1{font-size:32px;font-weight:900;letter-spacing:-1px}
+.logo h1 span{color:var(--purple)}
+.logo p{font-size:14px;color:var(--gray);margin-top:6px}
+
+/* Card */
+.login-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:32px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.login-card h2{font-size:20px;font-weight:800;margin-bottom:4px}
+.login-card .subtitle{font-size:13px;color:var(--gray);margin-bottom:28px}
+
+/* Form */
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.input-wrap{display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--card-border);border-radius:var(--radius-sm);padding:0 14px;transition:.3s}
+.input-wrap:focus-within{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-light)}
+.input-wrap .material-symbols-rounded{font-size:20px;color:var(--gray);margin-right:10px}
+.input-wrap input{flex:1;background:none;border:none;outline:none;color:var(--white);font-size:14px;font-family:var(--font);padding:14px 0}
+.input-wrap input::placeholder{color:var(--light-gray)}
+.toggle-pw{background:none;border:none;color:var(--gray);cursor:pointer;padding:4px;display:flex}
+.toggle-pw:hover{color:var(--white)}
+
+/* Error */
+.error-msg{display:none;align-items:center;gap:6px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red);padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-bottom:20px}
+.error-msg.show{display:flex}
+.error-msg .material-symbols-rounded{font-size:18px}
+
+/* Button */
+.login-btn{width:100%;background:var(--purple);color:#fff;border:none;border-radius:var(--radius-sm);padding:14px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.login-btn:hover{background:var(--purple-hover);transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.4)}
+.login-btn:active{transform:translateY(0)}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* Quick Access */
+.quick-access{margin-top:28px;text-align:center}
+.quick-access p{font-size:12px;color:var(--gray);margin-bottom:14px;font-weight:600}
+.role-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.role-chip{background:var(--bg);border:1px solid var(--card-border);border-radius:var(--radius-pill);padding:8px 16px;font-size:12px;font-weight:700;color:var(--gray);cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.role-chip:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-light)}
+.role-chip .material-symbols-rounded{font-size:16px}
+.role-chip.admin:hover{border-color:var(--purple);color:var(--purple)}
+.role-chip.customer:hover{border-color:var(--blue);color:var(--blue)}
+.role-chip.warehouse:hover{border-color:var(--orange);color:var(--orange)}
+.role-chip.store:hover{border-color:var(--green);color:var(--green)}
+
+/* Responsive */
+@media(max-width:480px){
+  .login-card{padding:24px}
+  .logo h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+<div class="login-container">
+  <div class="logo">
+    <h1>Virtual<span>Shelf</span></h1>
+    <p>Complete Supermarket Virtual Shopping System</p>
+  </div>
+
+  <div class="login-card">
+    <h2>Welcome Back</h2>
+    <p class="subtitle">Sign in to your account to continue</p>
+
+    <div class="error-msg" id="errorMsg">
+      <span class="material-symbols-rounded">error</span>
+      <span id="errorText">Invalid credentials</span>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Username</label>
+        <div class="input-wrap">
+          <span class="material-symbols-rounded">person</span>
+          <input type="text" id="username" placeholder="Enter username" autocomplete="username" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="material-symbols-rounded">lock</span>
+          <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required>
+          <button type="button" class="toggle-pw" onclick="togglePassword()">
+            <span class="material-symbols-rounded" id="pwIcon">visibility</span>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">
+        <span class="material-symbols-rounded">login</span>
+        Sign In
+      </button>
+    </form>
+
+    <div class="quick-access">
+      <p>Quick Access — Demo Accounts</p>
+      <div class="role-chips">
+        <div class="role-chip admin" onclick="quickLogin('admin','admin123')">
+          <span class="material-symbols-rounded">admin_panel_settings</span> Admin
+        </div>
+        <div class="role-chip customer" onclick="quickLogin('customer','cust123')">
+          <span class="material-symbols-rounded">shopping_cart</span> Customer
+        </div>
+        <div class="role-chip warehouse" onclick="quickLogin('warehouse','wh123')">
+          <span class="material-symbols-rounded">warehouse</span> Warehouse
+        </div>
+        <div class="role-chip store" onclick="quickLogin('store','store123')">
+          <span class="material-symbols-rounded">store</span> Store
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+// Check if already logged in
+(function(){
+  const user = VS_AUTH.getCurrentUser();
+  if(user){
+    const basePath = window.location.pathname.replace(/auth\.html$/, '');
+    window.location.href = basePath + VS_AUTH.roleHome[user.role];
+  }
+})();
+
+function togglePassword(){
+  const pw = document.getElementById('password');
+  const icon = document.getElementById('pwIcon');
+  if(pw.type === 'password'){ pw.type='text'; icon.textContent='visibility_off'; }
+  else { pw.type='password'; icon.textContent='visibility'; }
+}
+
+function showError(msg){
+  const el = document.getElementById('errorMsg');
+  document.getElementById('errorText').textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=> el.classList.remove('show'), 4000);
+}
+
+function handleLogin(e){
+  e.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  
+  if(!username || !password){ showError('Please enter both username and password'); return; }
+  
+  const user = VS_AUTH.login(username, password);
+  if(!user){ showError('Invalid username or password'); return; }
+  
+  // Redirect to role-specific home
+  const basePath = window.location.pathname.replace(/auth\.html$/, '');
+  window.location.href = basePath + VS_AUTH.roleHome[user.role];
+}
+
+function quickLogin(username, password){
+  document.getElementById('username').value = username;
+  document.getElementById('password').value = password;
+  const user = VS_AUTH.login(username, password);
+  if(user){
+    const basePath = window.location.pathname.replace(/auth\.html$/, '');
+    window.location.href = basePath + VS_AUTH.roleHome[user.role];
+  }
+}
+</script>
+</body>
+</html>

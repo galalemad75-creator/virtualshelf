@@ -131,11 +131,11 @@ body{display:flex;flex-direction:column}
   <div class="nav-right">
     <span class="nav-date" id="navDate"></span>
     <button class="notif-btn"><span class="material-symbols-rounded">notifications</span><span class="notif-badge">3</span></button>
-    <div class="admin-profile">
-      <div class="admin-avatar">EK</div>
+    <div class="admin-profile" data-vs-logout title="Click to logout">
+      <div class="admin-avatar" data-vs-avatar>EK</div>
       <div>
-        <div class="admin-name">Emad Khalil</div>
-        <div class="admin-role">Store Owner</div>
+        <div class="admin-name" data-vs-name>Emad Hamdy</div>
+        <div class="admin-role" data-vs-role>Store Owner</div>
       </div>
     </div>
   </div>
@@ -363,4 +363,7 @@ updateDateTime();
 setInterval(updateDateTime,60000);
 </script>
 </body>
+<!-- VirtualShelf Auth Guard -->
+<script src="../auth.js"></script>
+<script>VS_AUTH.enforce(); VS_AUTH.updateUI();</script>
 </html>

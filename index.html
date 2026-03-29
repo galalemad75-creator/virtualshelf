@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VirtualShelf — Complete System</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;background:#0D1117;color:#F0F6FC;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:60px 20px}
@@ -29,13 +30,40 @@ h1 span{color:#00D4FF}
 .card:nth-child(4) .badge{background:rgba(124,58,237,.12);color:#7C3AED}
 .screens{font-size:12px;color:#8B949E;margin-top:16px;display:flex;gap:12px}
 .screens span{display:flex;align-items:center;gap:4px}
+.user-bar{position:fixed;top:0;left:0;right:0;background:#161B22;border-bottom:1px solid #21262D;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;z-index:100}
+.user-info{display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-name{font-size:13px;font-weight:600}
+.user-role{font-size:11px;color:#8B949E}
+.logout-btn{background:none;border:1px solid #21262D;border-radius:8px;padding:8px 16px;color:#8B949E;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;font-family:inherit}
+.logout-btn:hover{border-color:#EF4444;color:#EF4444}
+.logout-btn .material-symbols-rounded{font-size:16px}
+.card.locked{opacity:.4;pointer-events:none;position:relative}
+.card.locked::after{content:'🔒';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:32px}
+body{padding-top:100px}
 </style>
 </head>
 <body>
+
+<!-- User Bar -->
+<div class="user-bar">
+  <div class="user-info">
+    <div class="user-avatar" data-vs-avatar></div>
+    <div>
+      <div class="user-name" data-vs-name></div>
+      <div class="user-role" data-vs-role></div>
+    </div>
+  </div>
+  <button class="logout-btn" data-vs-logout>
+    <span class="material-symbols-rounded">logout</span>
+    Sign Out
+  </button>
+</div>
+
 <h1>Virtual<span>Shelf</span></h1>
 <p class="subtitle">Complete Supermarket Virtual Shopping System — 4 Apps, 1 Vision</p>
 <div class="grid">
-  <a class="card" href="customer/index.html">
+  <a class="card" id="card-customer" href="customer/index.html">
     <div class="icon">📱</div>
     <h2>Customer App</h2>
     <p>Premium mobile shopping experience with barcode scanning, cart management, and QR order confirmation.</p>
@@ -48,7 +76,7 @@ h1 span{color:#00D4FF}
       <span>✅ Confirm</span>
     </div>
   </a>
-  <a class="card" href="warehouse/index.html">
+  <a class="card" id="card-warehouse" href="warehouse/index.html">
     <div class="icon">🏭</div>
     <h2>Warehouse Panel</h2>
     <p>High-contrast order management for warehouse staff. Pick lists, QR scanning, and real-time order tracking.</p>
@@ -59,7 +87,7 @@ h1 span{color:#00D4FF}
       <span>📷 QR Scan</span>
     </div>
   </a>
-  <a class="card" href="store/index.html">
+  <a class="card" id="card-store" href="store/index.html">
     <div class="icon">🏪</div>
     <h2>Store Manager</h2>
     <p>Inventory dashboard with stock tracking, product management, and stock history logs.</p>
@@ -70,7 +98,7 @@ h1 span{color:#00D4FF}
       <span>📜 Stock Log</span>
     </div>
   </a>
-  <a class="card" href="admin/index.html">
+  <a class="card" id="card-admin" href="admin/index.html">
     <div class="icon">🖥️</div>
     <h2>Admin Dashboard</h2>
     <p>Executive control center with live KPIs, order tables, revenue charts, and real-time activity feed.</p>
@@ -83,5 +111,29 @@ h1 span{color:#00D4FF}
     </div>
   </a>
 </div>
+
+<script src="auth.js"></script>
+<script>
+(function(){
+  const user = VS_AUTH.getCurrentUser();
+  if(!user){ window.location.href = 'auth.html'; return; }
+
+  VS_AUTH.updateUI();
+
+  // Lock cards the user can't access
+  const accessMap = {
+    'card-customer':  'customer/',
+    'card-warehouse': 'warehouse/',
+    'card-store':     'store/',
+    'card-admin':     'admin/',
+  };
+  for(const [id, path] of Object.entries(accessMap)){
+    if(!VS_AUTH.canAccess(path)){
+      document.getElementById(id).classList.add('locked');
+      document.getElementById(id).removeAttribute('href');
+    }
+  }
+})();
+</script>
 </body>
 </html>

@@ -146,6 +146,7 @@ html,body{height:100%;font-family:var(--font);background:#000;display:flex;justi
     <div class="screen-header">
       <h1>Inventory</h1>
       <div class="header-actions">
+        <button class="icon-btn outline" onclick="VS_AUTH.logout()" title="Sign Out"><span class="material-symbols-rounded">logout</span></button>
         <button class="icon-btn outline"><span class="material-symbols-rounded">download</span></button>
         <button class="icon-btn primary" onclick="showScreen('screen-add')"><span class="material-symbols-rounded">add</span></button>
       </div>
@@ -333,4 +334,7 @@ function setLogTab(el){
 renderProducts();
 </script>
 </body>
+<!-- VirtualShelf Auth Guard -->
+<script src="../auth.js"></script>
+<script>VS_AUTH.enforce(); VS_AUTH.updateUI();</script>
 </html>
