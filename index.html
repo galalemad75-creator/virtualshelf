@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtualShelf — Complete System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#0D1117;color:#F0F6FC;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:60px 20px}
+h1{font-size:48px;font-weight:900;letter-spacing:-1px;margin-bottom:8px}
+h1 span{color:#00D4FF}
+.subtitle{font-size:18px;color:#8B949E;margin-bottom:50px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:900px;width:100%}
+.card{background:#161B22;border:1px solid #21262D;border-radius:16px;padding:32px;cursor:pointer;transition:.3s;text-decoration:none;color:inherit;position:relative;overflow:hidden}
+.card:hover{border-color:#7C3AED;transform:translateY(-4px);box-shadow:0 12px 40px rgba(124,58,237,.15)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+.card:nth-child(1)::before{background:linear-gradient(90deg,#00D4FF,#0091D4)}
+.card:nth-child(2)::before{background:linear-gradient(90deg,#FF6B35,#FF9100)}
+.card:nth-child(3)::before{background:linear-gradient(90deg,#00C853,#00E676)}
+.card:nth-child(4)::before{background:linear-gradient(90deg,#7C3AED,#F59E0B)}
+.icon{font-size:48px;margin-bottom:16px}
+.card h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.card p{font-size:13px;color:#8B949E;line-height:1.5}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:12px}
+.card:nth-child(1) .badge{background:rgba(0,212,255,.12);color:#00D4FF}
+.card:nth-child(2) .badge{background:rgba(255,107,53,.12);color:#FF6B35}
+.card:nth-child(3) .badge{background:rgba(0,200,83,.12);color:#00C853}
+.card:nth-child(4) .badge{background:rgba(124,58,237,.12);color:#7C3AED}
+.screens{font-size:12px;color:#8B949E;margin-top:16px;display:flex;gap:12px}
+.screens span{display:flex;align-items:center;gap:4px}
+</style>
+</head>
+<body>
+<h1>Virtual<span>Shelf</span></h1>
+<p class="subtitle">Complete Supermarket Virtual Shopping System — 4 Apps, 1 Vision</p>
+<div class="grid">
+  <a class="card" href="customer/index.html">
+    <div class="icon">📱</div>
+    <h2>Customer App</h2>
+    <p>Premium mobile shopping experience with barcode scanning, cart management, and QR order confirmation.</p>
+    <span class="badge">Dark Theme · Electric Blue</span>
+    <div class="screens">
+      <span>🏠 Home</span>
+      <span>📷 Scanner</span>
+      <span>📦 Product</span>
+      <span>🛒 Cart</span>
+      <span>✅ Confirm</span>
+    </div>
+  </a>
+  <a class="card" href="warehouse/index.html">
+    <div class="icon">🏭</div>
+    <h2>Warehouse Panel</h2>
+    <p>High-contrast order management for warehouse staff. Pick lists, QR scanning, and real-time order tracking.</p>
+    <span class="badge">Dark Theme · Orange Accents</span>
+    <div class="screens">
+      <span>📋 Orders</span>
+      <span>📦 Pick List</span>
+      <span>📷 QR Scan</span>
+    </div>
+  </a>
+  <a class="card" href="store/index.html">
+    <div class="icon">🏪</div>
+    <h2>Store Manager</h2>
+    <p>Inventory dashboard with stock tracking, product management, and stock history logs.</p>
+    <span class="badge">Light Theme · Green Accents</span>
+    <div class="screens">
+      <span>📊 Dashboard</span>
+      <span>➕ Add Product</span>
+      <span>📜 Stock Log</span>
+    </div>
+  </a>
+  <a class="card" href="admin/index.html">
+    <div class="icon">🖥️</div>
+    <h2>Admin Dashboard</h2>
+    <p>Executive control center with live KPIs, order tables, revenue charts, and real-time activity feed.</p>
+    <span class="badge">Desktop · Purple & Gold</span>
+    <div class="screens">
+      <span>📈 KPIs</span>
+      <span>📋 Orders</span>
+      <span>📊 Charts</span>
+      <span>⚡ Live Feed</span>
+    </div>
+  </a>
+</div>
+</body>
+</html>

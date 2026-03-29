@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VirtualShelf — Customer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A1628;--card:#131F35;--card-hover:#192844;
+  --blue:#00D4FF;--blue-glow:rgba(0,212,255,.25);
+  --white:#FFFFFF;--gray:#8892A4;--light-gray:#2A3550;
+  --green:#00E676;--red:#FF5252;--orange:#FF9100;
+  --radius:14px;--radius-sm:10px;--radius-pill:50px;
+  --shadow:0 4px 24px rgba(0,0,0,.35);
+  --font:'Inter',system-ui,sans-serif;
+}
+html,body{height:100%;font-family:var(--font);background:#000;display:flex;justify-content:center;overflow:hidden}
+body{align-items:flex-start;padding-top:0}
+.phone{width:390px;height:844px;background:var(--bg);position:relative;overflow:hidden;border-radius:40px;box-shadow:0 0 60px rgba(0,212,255,.08),0 0 0 3px #1a2744;flex-shrink:0;margin-top:20px}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;overflow:hidden}
+.screen.hidden{transform:translateX(100%);opacity:0;pointer-events:none}
+.screen.back{transform:translateX(-30%);opacity:0;pointer-events:none}
+
+/* STATUS BAR */
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 24px 0;font-size:13px;font-weight:600;color:var(--white)}
+.status-bar .time{font-weight:700}
+.status-icons{display:flex;gap:5px;align-items:center}
+.status-icons svg{width:16px;height:16px;fill:var(--white)}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
+.logo{font-size:22px;font-weight:800;color:var(--white);letter-spacing:-.5px}
+.logo span{color:var(--blue)}
+.cart-btn{position:relative;background:var(--card);border:none;border-radius:var(--radius-sm);padding:10px;cursor:pointer;transition:.2s}
+.cart-btn:hover{background:var(--card-hover)}
+.cart-btn .material-symbols-rounded{font-size:22px;color:var(--white)}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:var(--blue);color:var(--bg);font-size:10px;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+
+/* SEARCH */
+.search-wrap{padding:0 20px 14px}
+.search{display:flex;align-items:center;background:var(--card);border-radius:var(--radius-pill);padding:12px 16px;gap:10px;border:1.5px solid transparent;transition:.3s}
+.search:focus-within{border-color:var(--blue);box-shadow:0 0 20px var(--blue-glow)}
+.search .material-symbols-rounded{font-size:20px;color:var(--gray)}
+.search input{flex:1;background:none;border:none;outline:none;color:var(--white);font-size:14px;font-family:var(--font)}
+.search input::placeholder{color:var(--gray)}
+.scan-icon{background:var(--blue);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.2s}
+.scan-icon:hover{transform:scale(1.08)}
+.scan-icon .material-symbols-rounded{font-size:18px;color:var(--bg)}
+
+/* CATEGORIES */
+.categories{padding:0 20px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.categories::-webkit-scrollbar{display:none}
+.cat-pill{padding:8px 18px;border-radius:var(--radius-pill);font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;transition:.2s;border:none;font-family:var(--font)}
+.cat-pill.active{background:var(--blue);color:var(--bg)}
+.cat-pill:not(.active){background:var(--card);color:var(--gray)}
+.cat-pill:not(.active):hover{background:var(--card-hover);color:var(--white)}
+
+/* PRODUCT GRID */
+.product-grid{flex:1;overflow-y:auto;padding:0 20px 100px;display:grid;grid-template-columns:1fr 1fr;gap:12px;scrollbar-width:none}
+.product-grid::-webkit-scrollbar{display:none}
+.product-card{background:var(--card);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.25s;position:relative}
+.product-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.product-img{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,#162033,#1a2a45)}
+.product-info{padding:12px}
+.product-name{font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px;line-height:1.3}
+.product-price{font-size:17px;font-weight:800;color:var(--blue)}
+.product-unit{font-size:11px;color:var(--gray);font-weight:400}
+.add-btn{position:absolute;bottom:12px;right:12px;background:var(--blue);border:none;border-radius:var(--radius-sm);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;box-shadow:0 2px 12px var(--blue-glow)}
+.add-btn:hover{transform:scale(1.1)}
+.add-btn .material-symbols-rounded{font-size:18px;color:var(--bg);font-weight:700}
+.add-btn.added{background:var(--green)}
+
+/* BOTTOM NAV */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;padding:12px 10px 30px;background:linear-gradient(transparent,var(--bg) 20%);backdrop-filter:blur(12px);z-index:10}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 16px;border-radius:var(--radius-sm);transition:.2s;border:none;background:none}
+.nav-item .material-symbols-rounded{font-size:24px;color:var(--gray);transition:.2s}
+.nav-item span{font-size:10px;color:var(--gray);font-weight:500;transition:.2s}
+.nav-item.active .material-symbols-rounded{color:var(--blue)}
+.nav-item.active span{color:var(--blue)}
+.nav-item:hover .material-symbols-rounded{color:var(--white)}
+
+/* ===== SCREEN 2: BARCODE SCANNER ===== */
+.scanner-screen{background:#000}
+.scanner-viewfinder{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.scanner-bg{position:absolute;inset:0;background:radial-gradient(circle at center,transparent 120px,rgba(0,0,0,.75))}
+.scan-frame{width:240px;height:240px;position:relative}
+.scan-corner{position:absolute;width:30px;height:30px;border:3px solid var(--green)}
+.scan-corner.tl{top:0;left:0;border-right:none;border-bottom:none;border-radius:6px 0 0 0}
+.scan-corner.tr{top:0;right:0;border-left:none;border-bottom:none;border-radius:0 6px 0 0}
+.scan-corner.bl{bottom:0;left:0;border-right:none;border-top:none;border-radius:0 0 0 6px}
+.scan-corner.br{bottom:0;right:0;border-left:none;border-top:none;border-radius:0 0 6px 0}
+.scan-line{position:absolute;top:0;left:10%;right:10%;height:2px;background:var(--green);box-shadow:0 0 12px var(--green),0 0 30px rgba(0,230,118,.3);animation:scanMove 2s ease-in-out infinite}
+@keyframes scanMove{0%,100%{top:5%}50%{top:92%}}
+.scan-text{position:absolute;bottom:120px;text-align:center;color:var(--white);font-size:15px;font-weight:500}
+.scan-sub{color:var(--gray);font-size:12px;margin-top:6px}
+.scanner-cancel{padding:0 20px 50px}
+.cancel-btn{width:100%;padding:16px;border-radius:var(--radius);border:1.5px solid var(--light-gray);background:transparent;color:var(--white);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s}
+.cancel-btn:hover{background:var(--card)}
+
+/* ===== SCREEN 3: PRODUCT DETAIL ===== */
+.detail-screen{background:var(--bg)}
+.detail-img{height:340px;background:linear-gradient(135deg,#162033,#1a2a45);display:flex;align-items:center;justify-content:center;font-size:100px;position:relative}
+.detail-back{position:absolute;top:50px;left:16px;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);border:none;border-radius:var(--radius-sm);padding:10px;cursor:pointer}
+.detail-back .material-symbols-rounded{color:var(--white);font-size:20px}
+.detail-body{flex:1;overflow-y:auto;padding:20px 20px 120px}
+.detail-category{display:inline-block;background:rgba(0,212,255,.12);color:var(--blue);font-size:11px;font-weight:700;padding:4px 10px;border-radius:var(--radius-pill);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.detail-name{font-size:24px;font-weight:800;color:var(--white);margin-bottom:8px;line-height:1.2}
+.detail-price{font-size:28px;font-weight:800;color:var(--blue);margin-bottom:20px}
+.detail-price .unit{font-size:14px;color:var(--gray);font-weight:500}
+.qty-selector{display:flex;align-items:center;gap:0;margin-bottom:24px;background:var(--card);border-radius:var(--radius-pill);width:fit-content;overflow:hidden}
+.qty-btn{background:none;border:none;color:var(--white);width:44px;height:44px;font-size:20px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;font-family:var(--font)}
+.qty-btn:hover{background:var(--card-hover)}
+.qty-num{font-size:18px;font-weight:700;color:var(--white);min-width:44px;text-align:center}
+.add-to-cart-btn{width:100%;padding:16px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,#00D4FF,#0091D4);color:var(--bg);font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.25s;box-shadow:0 4px 20px var(--blue-glow)}
+.add-to-cart-btn:hover{transform:translateY(-1px);box-shadow:0 6px 28px var(--blue-glow)}
+.detail-desc{margin-top:24px}
+.detail-desc h4{font-size:14px;font-weight:700;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.detail-desc p{font-size:14px;color:var(--gray);line-height:1.6}
+
+/* ===== SCREEN 4: CART ===== */
+.cart-screen{background:var(--bg)}
+.cart-header{display:flex;align-items:center;gap:12px;padding:16px 20px}
+.cart-header .back-btn{background:var(--card);border:none;border-radius:var(--radius-sm);padding:10px;cursor:pointer}
+.cart-header .back-btn .material-symbols-rounded{color:var(--white);font-size:20px}
+.cart-header h2{font-size:20px;font-weight:700;color:var(--white)}
+.cart-count{background:var(--blue);color:var(--bg);font-size:11px;font-weight:800;padding:2px 8px;border-radius:var(--radius-pill)}
+.cart-items{flex:1;overflow-y:auto;padding:0 20px 20px}
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--light-gray);align-items:center}
+.cart-item-img{width:60px;height:60px;border-radius:var(--radius-sm);background:linear-gradient(135deg,#162033,#1a2a45);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-name{font-size:14px;font-weight:600;color:var(--white);margin-bottom:4px}
+.cart-item-price{font-size:13px;color:var(--gray)}
+.cart-item-qty{display:flex;align-items:center;gap:8px}
+.cart-qty-btn{background:var(--card);border:1px solid var(--light-gray);color:var(--white);width:30px;height:30px;border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font);transition:.2s}
+.cart-qty-btn:hover{background:var(--card-hover)}
+.cart-qty-num{font-size:14px;font-weight:700;color:var(--white);min-width:20px;text-align:center}
+.cart-item-sub{font-size:15px;font-weight:700;color:var(--blue);margin-left:8px;min-width:60px;text-align:right}
+.cart-summary{padding:20px;background:var(--card);border-radius:var(--radius) var(--radius) 0 0;margin-top:auto}
+.summary-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--gray)}
+.summary-row.total{font-size:18px;font-weight:800;color:var(--white);margin-top:12px;padding-top:12px;border-top:1px solid var(--light-gray)}
+.checkout-btn{width:100%;padding:16px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,#00D4FF,#0091D4);color:var(--bg);font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:16px;transition:.25s;box-shadow:0 4px 24px var(--blue-glow)}
+.checkout-btn:hover{transform:translateY(-1px)}
+
+/* ===== SCREEN 5: QR / ORDER CONFIRMED ===== */
+.confirm-screen{background:var(--bg);align-items:center;justify-content:center;padding:40px 30px}
+.check-circle{width:80px;height:80px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
+.check-circle .material-symbols-rounded{font-size:40px;color:var(--bg)}
+@keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.confirm-title{font-size:24px;font-weight:800;color:var(--white);margin-bottom:8px}
+.confirm-sub{font-size:14px;color:var(--gray);margin-bottom:28px}
+.qr-card{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:0 8px 40px rgba(0,0,0,.4);margin-bottom:24px}
+.qr-placeholder{width:180px;height:180px;background:repeating-conic-gradient(#000 0% 25%,#fff 0% 50%) 0 0 / 12px 12px;border-radius:4px;position:relative}
+.qr-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.qr-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:1px;width:160px;height:160px}
+.qr-grid div{background:#000;border-radius:1px}
+.qr-grid div.w{background:#fff}
+.order-num{font-size:14px;color:var(--gray);margin-bottom:6px}
+.order-num strong{color:var(--white);font-size:16px}
+.eta{display:flex;align-items:center;gap:8px;background:var(--card);padding:12px 20px;border-radius:var(--radius-pill);font-size:13px;color:var(--gray)}
+.eta .material-symbols-rounded{font-size:18px;color:var(--blue)}
+
+/* SCREEN NAVIGATION ARROWS (for demo) */
+.demo-nav{position:absolute;top:50%;right:-50px;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px}
+.demo-nav button{width:36px;height:36px;border-radius:50%;border:1.5px solid #333;background:#111;color:#666;cursor:pointer;font-size:14px;transition:.2s;display:flex;align-items:center;justify-content:center}
+.demo-nav button:hover{border-color:var(--blue);color:var(--blue)}
+.demo-nav button.active-demo{border-color:var(--blue);color:var(--blue);background:rgba(0,212,255,.1)}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <!-- SCREEN 1: HOME -->
+  <div class="screen" id="screen-home">
+    <div class="status-bar"><span class="time">9:41</span><div class="status-icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
+    <div class="header">
+      <div class="logo">Virtual<span>Shelf</span></div>
+      <button class="cart-btn" onclick="showScreen('screen-cart')"><span class="material-symbols-rounded">shopping_cart</span><div class="cart-badge" id="cartBadge">3</div></button>
+    </div>
+    <div class="search-wrap">
+      <div class="search">
+        <span class="material-symbols-rounded">search</span>
+        <input type="text" placeholder="Search products...">
+        <button class="scan-icon" onclick="showScreen('screen-scanner')"><span class="material-symbols-rounded">qr_code_scanner</span></button>
+      </div>
+    </div>
+    <div class="categories">
+      <button class="cat-pill active">All</button>
+      <button class="cat-pill">Beverages</button>
+      <button class="cat-pill">Dairy</button>
+      <button class="cat-pill">Grains</button>
+      <button class="cat-pill">Snacks</button>
+      <button class="cat-pill">Fruits</button>
+      <button class="cat-pill">Bakery</button>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+    <div class="bottom-nav">
+      <button class="nav-item active"><span class="material-symbols-rounded">home</span><span>Home</span></button>
+      <button class="nav-item" onclick="showScreen('screen-scanner')"><span class="material-symbols-rounded">qr_code_scanner</span><span>Scanner</span></button>
+      <button class="nav-item" onclick="showScreen('screen-cart')"><span class="material-symbols-rounded">shopping_cart</span><span>Cart</span></button>
+      <button class="nav-item"><span class="material-symbols-rounded">person</span><span>Profile</span></button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: BARCODE SCANNER -->
+  <div class="screen hidden scanner-screen" id="screen-scanner">
+    <div class="scanner-viewfinder">
+      <div class="scanner-bg"></div>
+      <div class="scan-frame">
+        <div class="scan-corner tl"></div>
+        <div class="scan-corner tr"></div>
+        <div class="scan-corner bl"></div>
+        <div class="scan-corner br"></div>
+        <div class="scan-line"></div>
+      </div>
+      <div style="position:absolute;bottom:140px;text-align:center">
+        <p style="color:var(--white);font-size:15px;font-weight:500">Point camera at barcode</p>
+        <p style="color:var(--gray);font-size:12px;margin-top:6px">Scanning will happen automatically</p>
+      </div>
+    </div>
+    <div class="scanner-cancel">
+      <button class="cancel-btn" onclick="showScreen('screen-home')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: PRODUCT DETAIL -->
+  <div class="screen hidden detail-screen" id="screen-detail">
+    <div class="detail-img" id="detailImg">🥛
+      <button class="detail-back" onclick="showScreen('screen-home')"><span class="material-symbols-rounded">arrow_back</span></button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-category" id="detailCat">DAIRY</div>
+      <h1 class="detail-name" id="detailName">Organic Whole Milk</h1>
+      <div class="detail-price" id="detailPrice">$4.99 <span class="unit">/ 1L</span></div>
+      <div class="qty-selector">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-num" id="qtyNum">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+      <button class="add-to-cart-btn" onclick="addToCartFromDetail()">Add to Cart — $4.99</button>
+      <div class="detail-desc">
+        <h4>Description</h4>
+        <p id="detailDesc">Premium organic whole milk from grass-fed cows. Rich in calcium and vitamin D. No artificial hormones or antibiotics. Fresh from local farms.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: CART -->
+  <div class="screen hidden cart-screen" id="screen-cart">
+    <div class="cart-header">
+      <button class="back-btn" onclick="showScreen('screen-home')"><span class="material-symbols-rounded">arrow_back</span></button>
+      <h2>My Cart</h2>
+      <span class="cart-count" id="cartCountHeader">3 items</span>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-summary">
+      <div class="summary-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+      <div class="summary-row"><span>Delivery</span><span style="color:var(--green)">Free</span></div>
+      <div class="summary-row"><span>Offers</span><span style="color:var(--orange)">-$2.50</span></div>
+      <div class="summary-row total"><span>Total</span><span id="total">$0.00</span></div>
+      <button class="checkout-btn" onclick="showScreen('screen-confirm')">Checkout</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: ORDER CONFIRMED -->
+  <div class="screen hidden confirm-screen" id="screen-confirm">
+    <div class="check-circle"><span class="material-symbols-rounded">check</span></div>
+    <h1 class="confirm-title">Order Confirmed!</h1>
+    <p class="confirm-sub">Your order is being prepared</p>
+    <div class="qr-card">
+      <div class="qr-placeholder">
+        <div class="qr-overlay">
+          <div class="qr-grid" id="qrGrid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="order-num">Order #<strong>VS-0042</strong></div>
+    <div class="eta"><span class="material-symbols-rounded">schedule</span>Estimated ready: 12 mins</div>
+  </div>
+</div>
+
+<!-- Demo Navigation -->
+<div class="demo-nav">
+  <button class="active-demo" onclick="showScreen('screen-home')" title="Home">1</button>
+  <button onclick="showScreen('screen-scanner')" title="Scanner">2</button>
+  <button onclick="showScreen('screen-detail')" title="Detail">3</button>
+  <button onclick="showScreen('screen-cart')" title="Cart">4</button>
+  <button onclick="showScreen('screen-confirm')" title="Confirm">5</button>
+</div>
+
+<script>
+const products=[
+  {id:1,name:'Organic Whole Milk',price:4.99,cat:'Dairy',emoji:'🥛',desc:'Premium organic whole milk from grass-fed cows. Rich in calcium and vitamin D.'},
+  {id:2,name:'Sourdough Bread',price:3.49,cat:'Bakery',emoji:'🍞',desc:'Artisan sourdough bread, freshly baked daily with natural fermentation.'},
+  {id:3,name:'Free Range Eggs',price:5.99,cat:'Dairy',emoji:'🥚',desc:'Farm fresh free-range eggs. 12 count, grade A large eggs.'},
+  {id:4,name:'Sparkling Water',price:1.99,cat:'Beverages',emoji:'💧',desc:'Natural sparkling mineral water. Zero calories, zero sugar.'},
+  {id:5,name:'Avocados (3pk)',price:4.49,cat:'Fruits',emoji:'🥑',desc:'Ripe Hass avocados, ready to eat. Perfect for guacamole or toast.'},
+  {id:6,name:'Greek Yogurt',price:3.29,cat:'Dairy',emoji:'🫙',desc:'Thick and creamy Greek yogurt. High protein, low sugar.'},
+  {id:7,name:'Granola Mix',price:6.99,cat:'Grains',emoji:'🥣',desc:'Crunchy granola with oats, almonds, honey, and dried cranberries.'},
+  {id:8,name:'Orange Juice',price:4.29,cat:'Beverages',emoji:'🍊',desc:'Fresh squeezed orange juice, no added sugar. 100% natural.'},
+  {id:9,name:'Potato Chips',price:2.99,cat:'Snacks',emoji:'🥔',desc:'Crispy potato chips with sea salt. Kettle cooked for extra crunch.'},
+  {id:10,name:'Chocolate Bar',price:2.49,cat:'Snacks',emoji:'🍫',desc:'Premium dark chocolate 72% cacao. Smooth and rich flavor.'},
+];
+
+let cart=[
+  {product:products[0],qty:2},
+  {product:products[2],qty:1},
+  {product:products[6],qty:1},
+];
+
+let currentQty=1;
+let currentProduct=products[0];
+
+function renderGrid(){
+  const g=document.getElementById('productGrid');
+  g.innerHTML=products.map(p=>`
+    <div class="product-card" onclick="openDetail(${p.id})">
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">$${p.price.toFixed(2)} <span class="unit">/ ea</span></div>
+      </div>
+      <button class="add-btn" onclick="event.stopPropagation();quickAdd(${p.id})"><span class="material-symbols-rounded">add</span></button>
+    </div>
+  `).join('');
+}
+
+function openDetail(id){
+  currentProduct=products.find(p=>p.id===id);
+  currentQty=1;
+  document.getElementById('detailImg').textContent=currentProduct.emoji;
+  document.getElementById('detailCat').textContent=currentProduct.cat.toUpperCase();
+  document.getElementById('detailName').textContent=currentProduct.name;
+  document.getElementById('detailPrice').innerHTML=`$${currentProduct.price.toFixed(2)} <span class="unit">/ ea</span>`;
+  document.getElementById('qtyNum').textContent=currentQty;
+  document.getElementById('detailDesc').textContent=currentProduct.desc;
+  updateAddBtn();
+  showScreen('screen-detail');
+}
+
+function changeQty(d){
+  currentQty=Math.max(1,currentQty+d);
+  document.getElementById('qtyNum').textContent=currentQty;
+  updateAddBtn();
+}
+
+function updateAddBtn(){
+  const btn=document.querySelector('.add-to-cart-btn');
+  btn.textContent=`Add to Cart — $${(currentProduct.price*currentQty).toFixed(2)}`;
+}
+
+function quickAdd(id){
+  const p=products.find(x=>x.id===id);
+  const existing=cart.find(c=>c.product.id===id);
+  if(existing)existing.qty++;else cart.push({product:p,qty:1});
+  updateCartBadge();
+  // Visual feedback
+  event.target.closest('.add-btn').classList.add('added');
+  setTimeout(()=>event.target.closest('.add-btn').classList.remove('added'),600);
+}
+
+function addToCartFromDetail(){
+  const existing=cart.find(c=>c.product.id===currentProduct.id);
+  if(existing)existing.qty+=currentQty;else cart.push({product:currentProduct,qty:currentQty});
+  updateCartBadge();
+  showScreen('screen-cart');
+}
+
+function updateCartBadge(){
+  const total=cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cartBadge').textContent=total;
+  document.getElementById('cartCountHeader').textContent=total+' items';
+}
+
+function renderCart(){
+  const el=document.getElementById('cartItems');
+  el.innerHTML=cart.map((c,i)=>`
+    <div class="cart-item">
+      <div class="cart-item-img">${c.product.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${c.product.name}</div>
+        <div class="cart-item-price">$${c.product.price.toFixed(2)} / ea</div>
+      </div>
+      <div class="cart-item-qty">
+        <button class="cart-qty-btn" onclick="cartQty(${i},-1)">−</button>
+        <span class="cart-qty-num">${c.qty}</span>
+        <button class="cart-qty-btn" onclick="cartQty(${i},1)">+</button>
+      </div>
+      <div class="cart-item-sub">$${(c.product.price*c.qty).toFixed(2)}</div>
+    </div>
+  `).join('');
+  const sub=cart.reduce((s,c)=>s+c.product.price*c.qty,0);
+  document.getElementById('subtotal').textContent='$'+sub.toFixed(2);
+  document.getElementById('total').textContent='$'+(sub-2.50).toFixed(2);
+}
+
+function cartQty(i,d){
+  cart[i].qty=Math.max(0,cart[i].qty+d);
+  if(cart[i].qty===0)cart.splice(i,1);
+  updateCartBadge();
+  renderCart();
+}
+
+function generateQR(){
+  const g=document.getElementById('qrGrid');
+  let html='';
+  for(let i=0;i<121;i++){
+    const isCorner=(i<11&&i%11<3)||(i<33&&i%11<3)||(i>87&&i%11<3)||(i<11&&i%11>7)||(i>87&&i%11>7);
+    const w=Math.random()>.5?'w':'';
+    html+=`<div class="${w}"></div>`;
+  }
+  g.innerHTML=html;
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('back');
+    if(!s.classList.contains('hidden')&&s.id!==id)s.classList.add('hidden');
+  });
+  const target=document.getElementById(id);
+  target.classList.remove('hidden');
+  if(id==='screen-cart')renderCart();
+  if(id==='screen-confirm')generateQR();
+  // Update demo nav
+  document.querySelectorAll('.demo-nav button').forEach((b,i)=>{
+    b.classList.toggle('active-demo',['screen-home','screen-scanner','screen-detail','screen-cart','screen-confirm'][i]===id);
+  });
+}
+
+// Category pills
+document.querySelectorAll('.cat-pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.cat-pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+  });
+});
+
+renderGrid();
+updateCartBadge();
+</script>
+</body>
+</html>
