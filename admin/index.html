@@ -26,7 +26,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--w
 body{display:flex;flex-direction:column}
 
 /* TOP NAV */
-.top-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--card-border);background:var(--card);flex-shrink:0}
+.top-nav{position:relative;display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--card-border);background:var(--card);flex-shrink:0}
 .nav-left{display:flex;align-items:center;gap:12px}
 .nav-logo{font-size:20px;font-weight:800;letter-spacing:-.5px}
 .nav-logo span{color:var(--purple)}
@@ -165,56 +165,56 @@ body{display:flex;flex-direction:column}
       </div>
     </div>
   </div>
-</div>
 
-<!-- Notification Panel -->
-<div class="notif-panel" id="notifPanel">
-  <div class="notif-panel-header">
-    <h4>🔔 Notifications</h4>
-    <button class="notif-clear" onclick="clearNotifs()">Mark all read</button>
-  </div>
-  <div class="notif-list" id="notifList">
-    <div class="notif-item">
-      <div class="notif-icon order"><span class="material-symbols-rounded">receipt_long</span></div>
-      <div class="notif-body">
-        <div class="notif-title">New Order #VS-0048</div>
-        <div class="notif-desc">Sara M. placed an order — 4 items, $18.99</div>
-        <div class="notif-time">Just now</div>
-      </div>
-      <div class="notif-unread"></div>
+  <!-- Notification Panel (inside top-nav for proper positioning) -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-header">
+      <h4>🔔 Notifications</h4>
+      <button class="notif-clear" onclick="clearNotifs()">Mark all read</button>
     </div>
-    <div class="notif-item">
-      <div class="notif-icon stock"><span class="material-symbols-rounded">warning</span></div>
-      <div class="notif-body">
-        <div class="notif-title">Low Stock Alert</div>
-        <div class="notif-desc">Milk 1L — only 8 remaining</div>
-        <div class="notif-time">3 min ago</div>
+    <div class="notif-list" id="notifList">
+      <div class="notif-item">
+        <div class="notif-icon order"><span class="material-symbols-rounded">receipt_long</span></div>
+        <div class="notif-body">
+          <div class="notif-title">New Order #VS-0048</div>
+          <div class="notif-desc">Sara M. placed an order — 4 items, $18.99</div>
+          <div class="notif-time">Just now</div>
+        </div>
+        <div class="notif-unread"></div>
       </div>
-      <div class="notif-unread"></div>
-    </div>
-    <div class="notif-item">
-      <div class="notif-icon success"><span class="material-symbols-rounded">local_shipping</span></div>
-      <div class="notif-body">
-        <div class="notif-title">Order #VS-0047 Delivered</div>
-        <div class="notif-desc">Ahmed K. received their order successfully</div>
-        <div class="notif-time">5 min ago</div>
+      <div class="notif-item">
+        <div class="notif-icon stock"><span class="material-symbols-rounded">warning</span></div>
+        <div class="notif-body">
+          <div class="notif-title">Low Stock Alert</div>
+          <div class="notif-desc">Milk 1L — only 8 remaining</div>
+          <div class="notif-time">3 min ago</div>
+        </div>
+        <div class="notif-unread"></div>
       </div>
-      <div class="notif-unread"></div>
-    </div>
-    <div class="notif-item">
-      <div class="notif-icon stock"><span class="material-symbols-rounded">inventory_2</span></div>
-      <div class="notif-body">
-        <div class="notif-title">Restock Needed</div>
-        <div class="notif-desc">Sourdough Bread below minimum threshold</div>
-        <div class="notif-time">18 min ago</div>
+      <div class="notif-item">
+        <div class="notif-icon success"><span class="material-symbols-rounded">local_shipping</span></div>
+        <div class="notif-body">
+          <div class="notif-title">Order #VS-0047 Delivered</div>
+          <div class="notif-desc">Ahmed K. received their order successfully</div>
+          <div class="notif-time">5 min ago</div>
+        </div>
+        <div class="notif-unread"></div>
       </div>
-    </div>
-    <div class="notif-item">
-      <div class="notif-icon order"><span class="material-symbols-rounded">receipt_long</span></div>
-      <div class="notif-body">
-        <div class="notif-title">New Order #VS-0044</div>
-        <div class="notif-desc">Youssef N. placed an order — 9 items, $45.60</div>
-        <div class="notif-time">12 min ago</div>
+      <div class="notif-item">
+        <div class="notif-icon stock"><span class="material-symbols-rounded">inventory_2</span></div>
+        <div class="notif-body">
+          <div class="notif-title">Restock Needed</div>
+          <div class="notif-desc">Sourdough Bread below minimum threshold</div>
+          <div class="notif-time">18 min ago</div>
+        </div>
+      </div>
+      <div class="notif-item">
+        <div class="notif-icon order"><span class="material-symbols-rounded">receipt_long</span></div>
+        <div class="notif-body">
+          <div class="notif-title">New Order #VS-0044</div>
+          <div class="notif-desc">Youssef N. placed an order — 9 items, $45.60</div>
+          <div class="notif-time">12 min ago</div>
+        </div>
       </div>
     </div>
   </div>

@@ -163,10 +163,10 @@ html,body{height:100%;font-family:var(--font);background:#000;display:flex;justi
     </div>
     <div class="product-list" id="productList"></div>
     <div class="bottom-nav">
-      <button class="nav-item active"><span class="material-symbols-rounded">inventory_2</span><span>Inventory</span></button>
+      <button class="nav-item active" onclick="showScreen('screen-dashboard')"><span class="material-symbols-rounded">inventory_2</span><span>Inventory</span></button>
       <button class="nav-item" onclick="showScreen('screen-log')"><span class="material-symbols-rounded">history</span><span>History</span></button>
-      <button class="nav-item"><span class="material-symbols-rounded">analytics</span><span>Reports</span></button>
-      <button class="nav-item"><span class="material-symbols-rounded">settings</span><span>Settings</span></button>
+      <button class="nav-item" onclick="alert('📊 Reports coming soon!')"><span class="material-symbols-rounded">analytics</span><span>Reports</span></button>
+      <button class="nav-item" onclick="confirmLogout()"><span class="material-symbols-rounded">logout</span><span>Logout</span></button>
     </div>
   </div>
 
@@ -272,9 +272,9 @@ html,body{height:100%;font-family:var(--font);background:#000;display:flex;justi
     </div>
     <div class="bottom-nav">
       <button class="nav-item" onclick="showScreen('screen-dashboard')"><span class="material-symbols-rounded">inventory_2</span><span>Inventory</span></button>
-      <button class="nav-item active"><span class="material-symbols-rounded">history</span><span>History</span></button>
-      <button class="nav-item"><span class="material-symbols-rounded">analytics</span><span>Reports</span></button>
-      <button class="nav-item"><span class="material-symbols-rounded">settings</span><span>Settings</span></button>
+      <button class="nav-item active" onclick="showScreen('screen-log')"><span class="material-symbols-rounded">history</span><span>History</span></button>
+      <button class="nav-item" onclick="alert('📊 Reports coming soon!')"><span class="material-symbols-rounded">analytics</span><span>Reports</span></button>
+      <button class="nav-item" onclick="confirmLogout()"><span class="material-symbols-rounded">logout</span><span>Logout</span></button>
     </div>
   </div>
 </div>
@@ -332,6 +332,10 @@ function setLogTab(el){
 }
 
 renderProducts();
+
+function confirmLogout(){
+  if(confirm('Are you sure you want to logout?')) VS_AUTH.logout();
+}
 
 // ===== SOUND ALERT SYSTEM =====
 const SoundAlert = {

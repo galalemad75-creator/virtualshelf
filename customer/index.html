@@ -151,12 +151,9 @@ body{align-items:flex-start;padding-top:0}
 @keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
 .confirm-title{font-size:24px;font-weight:800;color:var(--white);margin-bottom:8px}
 .confirm-sub{font-size:14px;color:var(--gray);margin-bottom:28px}
-.qr-card{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:0 8px 40px rgba(0,0,0,.4);margin-bottom:24px}
-.qr-placeholder{width:180px;height:180px;background:repeating-conic-gradient(#000 0% 25%,#fff 0% 50%) 0 0 / 12px 12px;border-radius:4px;position:relative}
-.qr-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.qr-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:1px;width:160px;height:160px}
-.qr-grid div{background:#000;border-radius:1px}
-.qr-grid div.w{background:#fff}
+.qr-card{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:0 8px 40px rgba(0,0,0,.4);margin-bottom:24px;display:flex;align-items:center;justify-content:center}
+.qr-placeholder{width:180px;height:180px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:4px}
+.qr-grid{display:flex;flex-wrap:wrap;align-content:flex-start}
 .order-num{font-size:14px;color:var(--gray);margin-bottom:6px}
 .order-num strong{color:var(--white);font-size:16px}
 .eta{display:flex;align-items:center;gap:8px;background:var(--card);padding:12px 20px;border-radius:var(--radius-pill);font-size:13px;color:var(--gray)}
@@ -270,9 +267,7 @@ body{align-items:flex-start;padding-top:0}
     <p class="confirm-sub">Your order is being prepared</p>
     <div class="qr-card">
       <div class="qr-placeholder">
-        <div class="qr-overlay">
-          <div class="qr-grid" id="qrGrid"></div>
-        </div>
+        <div class="qr-grid" id="qrGrid"></div>
       </div>
     </div>
     <div class="order-num">Order #<strong>VS-0042</strong></div>
@@ -405,12 +400,62 @@ function cartQty(i,d){
 function generateQR(){
   const g=document.getElementById('qrGrid');
   let html='';
-  for(let i=0;i<121;i++){
-    const isCorner=(i<11&&i%11<3)||(i<33&&i%11<3)||(i>87&&i%11<3)||(i<11&&i%11>7)||(i>87&&i%11>7);
-    const w=Math.random()>.5?'w':'';
-    html+=`<div class="${w}"></div>`;
+  // Create a realistic QR-like pattern with proper finder patterns
+  const size=21; // QR version 1 = 21x21
+  const grid=[];
+  // Initialize grid
+  for(let r=0;r<size;r++){grid[r]=[];for(let c=0;c<size;c++)grid[r][c]=false;}
+  
+  // Draw finder pattern (7x7 square with inner pattern)
+  function drawFinder(r0,c0){
+    for(let r=0;r<7;r++)for(let c=0;c<7;c++){
+      const isBorder=r===0||r===6||c===0||c===6;
+      const isInner=r>=2&&r<=4&&c>=2&&c<=4;
+      grid[r0+r][c0+c]=isBorder||isInner;
+    }
   }
-  g.innerHTML=html;
+  // Three finder patterns (top-left, top-right, bottom-left)
+  drawFinder(0,0);
+  drawFinder(0,size-7);
+  drawFinder(size-7,0);
+  
+  // Timing patterns
+  for(let i=8;i<size-8;i++){grid[6][i]=i%2===0;grid[i][6]=i%2===0;}
+  
+  // Alignment pattern (center area for version 1+)
+  if(size>=25){
+    for(let r=-2;r<=2;r++)for(let c=-2;c<=2;c++){
+      const ar=16+r,ac=16+c;
+      if(ar>=0&&ar<size&&ac>=0&&ac<size)
+        grid[ar][ac]=Math.abs(r)===2||Math.abs(c)===2||(r===0&&c===0);
+    }
+  }
+  
+  // Data modules (pseudo-random but consistent)
+  const seed=Date.now()%1000;
+  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
+    if(!grid[r][c] && !(r<8&&c<8) && !(r<8&&c>=size-8) && !(r>=size-8&&c<8)){
+      grid[r][c]=((r*7+c*13+seed)%3)===0;
+    }
+  }
+  
+  // Render with CSS grid scaled to fit 160px
+  const cellSize=160/size;
+  g.style.display='grid';
+  g.style.gridTemplateColumns=`repeat(${size},${cellSize}px)`;
+  g.style.gridTemplateRows=`repeat(${size},${cellSize}px)`;
+  g.style.width='160px';
+  g.style.height='160px';
+  g.style.gap='0';
+  
+  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
+    const d=document.createElement('div');
+    d.style.width=cellSize+'px';
+    d.style.height=cellSize+'px';
+    d.style.background=grid[r][c]?'#000':'#fff';
+    d.style.borderRadius='0';
+    g.appendChild(d);
+  }
 }
 
 function showScreen(id){
