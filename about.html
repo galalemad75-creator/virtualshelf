@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtualShelf — About Us</title>
+<meta name="description" content="Learn about VirtualShelf - the complete supermarket virtual shopping system designed to revolutionize the shopping experience.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.about-hero{text-align:center;padding:60px 20px 40px}
+.about-hero h1{font-size:42px;font-weight:900;letter-spacing:-1px;margin-bottom:12px}
+.about-hero h1 span{color:var(--purple)}
+.about-hero p{font-size:18px;color:var(--gray);max-width:640px;margin:0 auto;line-height:1.6}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin:40px 0}
+.feature-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:28px;transition:.3s}
+.feature-card:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.feature-card .f-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:24px}
+.feature-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.feature-card p{font-size:13px;color:var(--gray);line-height:1.5}
+.f-icon.purple{background:var(--purple-light);color:var(--purple)}
+.f-icon.blue{background:rgba(0,212,255,.12);color:var(--blue)}
+.f-icon.green{background:rgba(16,185,129,.12);color:var(--green)}
+.f-icon.orange{background:rgba(249,115,22,.12);color:var(--orange)}
+.team-section{text-align:center;margin:50px 0}
+.team-section h2{font-size:28px;font-weight:800;margin-bottom:8px}
+.team-section>p{color:var(--gray);margin-bottom:32px;font-size:14px}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:800px;margin:0 auto}
+.team-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:24px;text-align:center;transition:.3s}
+.team-card:hover{border-color:var(--purple)}
+.team-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;margin:0 auto 12px;color:#fff}
+.team-card h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.team-card .role{font-size:12px;color:var(--gray);font-weight:600}
+.mission-box{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:40px;text-align:center;margin:40px 0}
+.mission-box h2{font-size:24px;font-weight:800;margin-bottom:12px}
+.mission-box p{font-size:15px;color:var(--gray);line-height:1.7;max-width:600px;margin:0 auto}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;margin:40px 0}
+.stat-card{text-align:center;padding:20px}
+.stat-value{font-size:36px;font-weight:900;color:var(--purple)}
+.stat-label{font-size:13px;color:var(--gray);margin-top:4px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <nav class="top-nav">
+    <a href="index.html" class="nav-logo">Virtual<span>Shelf</span></a>
+    <div class="nav-links">
+      <a href="about.html" class="active">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="refund.html">Refund</a>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+      <span class="material-symbols-rounded" id="themeIcon">dark_mode</span>
+    </button>
+  </nav>
+
+  <main class="legal-page">
+    <div class="legal-content">
+      <div class="about-hero">
+        <h1>About <span>VirtualShelf</span></h1>
+        <p>We're building the future of supermarket shopping — a seamless digital experience that connects customers, stores, warehouses, and managers in one unified platform.</p>
+      </div>
+
+      <div class="mission-box">
+        <h2>🎯 Our Mission</h2>
+        <p>To revolutionize the supermarket shopping experience by providing a complete digital ecosystem that makes grocery shopping faster, easier, and more enjoyable for everyone involved.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">4</div>
+          <div class="stat-label">Integrated Apps</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">100+</div>
+          <div class="stat-label">Products Available</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">24/7</div>
+          <div class="stat-label">Platform Availability</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Secure Transactions</div>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="f-icon purple">
+            <span class="material-symbols-rounded">smartphone</span>
+          </div>
+          <h3>Customer App</h3>
+          <p>Premium mobile shopping with barcode scanning, smart cart management, and QR-based order confirmation for a seamless checkout experience.</p>
+        </div>
+        <div class="feature-card">
+          <div class="f-icon orange">
+            <span class="material-symbols-rounded">warehouse</span>
+          </div>
+          <h3>Warehouse Panel</h3>
+          <p>High-contrast order management for warehouse staff with pick lists, QR scanning, and real-time order tracking to ensure fast fulfillment.</p>
+        </div>
+        <div class="feature-card">
+          <div class="f-icon green">
+            <span class="material-symbols-rounded">store</span>
+          </div>
+          <h3>Store Manager</h3>
+          <p>Complete inventory dashboard with stock tracking, product management, and detailed stock history logs for data-driven decisions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="f-icon blue">
+            <span class="material-symbols-rounded">dashboard</span>
+          </div>
+          <h3>Admin Dashboard</h3>
+          <p>Executive control center with live KPIs, order tables, revenue charts, and real-time activity feed for complete business oversight.</p>
+        </div>
+      </div>
+
+      <div class="team-section">
+        <h2>👥 Our Team</h2>
+        <p>The passionate people behind VirtualShelf</p>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-avatar" style="background:linear-gradient(135deg,#7C3AED,#3B82F6)">EH</div>
+            <h4>Emad Hamdy</h4>
+            <div class="role">Founder & Lead Developer</div>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:linear-gradient(135deg,#F97316,#F59E0B)">AK</div>
+            <h4>Ahmed Khalil</h4>
+            <div class="role">Warehouse Operations</div>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar" style="background:linear-gradient(135deg,#10B981,#06B6D4)">SM</div>
+            <h4>Sara M.</h4>
+            <div class="role">Store Management</div>
+          </div>
+        </div>
+      </div>
+
+      <section class="legal-section" style="margin-top:40px">
+        <h2>Why VirtualShelf?</h2>
+        <ul>
+          <li><strong>All-in-One Platform:</strong> Four integrated applications working together seamlessly</li>
+          <li><strong>Real-Time Sync:</strong> Orders, inventory, and data update instantly across all apps</li>
+          <li><strong>User-Friendly:</strong> Intuitive interfaces designed for all user types</li>
+          <li><strong>Secure:</strong> Role-based access control protects sensitive operations</li>
+          <li><strong>Scalable:</strong> Built to grow with your business needs</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="footer-logo">Virtual<span>Shelf</span></span>
+        <p>Complete Supermarket Virtual Shopping System</p>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="refund.html">Refund Policy</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      <div class="footer-copy">
+        <p>&copy; 2026 VirtualShelf. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="theme.js"></script>
+</body>
+</html>

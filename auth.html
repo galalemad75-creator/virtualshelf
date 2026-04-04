@@ -4,8 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VirtualShelf — Login</title>
+<meta name="description" content="Sign in to VirtualShelf - Complete Supermarket Virtual Shopping System. Access customer, warehouse, store, and admin dashboards.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="auth.html">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -16,8 +20,13 @@
   --radius:14px;--radius-sm:10px;--radius-pill:50px;
   --font:'Inter',system-ui,sans-serif;
 }
+[data-theme="light"]{
+  --bg:#F6F8FA;--card:#FFFFFF;--card-border:#D0D7DE;
+  --white:#1F2328;--gray:#57606A;--light-gray:#AFB8C1;
+  --purple-light:rgba(124,58,237,.1);
+}
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--white)}
-body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;flex-direction:column}
 .login-container{width:100%;max-width:420px}
 .logo{text-align:center;margin-bottom:40px}
 .logo h1{font-size:32px;font-weight:900;letter-spacing:-1px}
@@ -78,6 +87,9 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
 </style>
 </head>
 <body>
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode" style="position:fixed;top:16px;right:16px;z-index:100">
+  <span class="material-symbols-rounded" id="themeIcon">dark_mode</span>
+</button>
 <div class="login-container">
   <div class="logo">
     <h1>Virtual<span>Shelf</span></h1>
@@ -167,6 +179,17 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
   </div>
 </div>
 
+<div class="auth-footer" style="margin-top:24px;text-align:center">
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+    <a href="privacy.html" style="font-size:12px;color:var(--gray);text-decoration:none;font-weight:600">Privacy Policy</a>
+    <a href="refund.html" style="font-size:12px;color:var(--gray);text-decoration:none;font-weight:600">Refund Policy</a>
+    <a href="about.html" style="font-size:12px;color:var(--gray);text-decoration:none;font-weight:600">About Us</a>
+    <a href="contact.html" style="font-size:12px;color:var(--gray);text-decoration:none;font-weight:600">Contact Us</a>
+  </div>
+  <p style="font-size:11px;color:var(--light-gray)">&copy; 2026 VirtualShelf. All rights reserved.</p>
+</div>
+
+<script src="theme.js"></script>
 <script src="auth.js"></script>
 <script>
 (function(){
