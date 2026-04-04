@@ -55,21 +55,19 @@ body{padding-top:100px}
 <!-- User Bar -->
 <div class="user-bar">
   <div class="user-info">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" style="background:none;border:1px solid #21262D;border-radius:8px;padding:6px;cursor:pointer;color:#8B949E;display:flex;align-items:center;margin-right:6px">
+      <span class="material-symbols-rounded" id="themeIcon" style="font-size:18px">dark_mode</span>
+    </button>
     <div class="user-avatar" data-vs-avatar></div>
     <div>
       <div class="user-name" data-vs-name></div>
       <div class="user-role" data-vs-role></div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" style="background:none;border:1px solid #21262D;border-radius:8px;padding:8px;cursor:pointer;color:#8B949E;display:flex;align-items:center">
-      <span class="material-symbols-rounded" id="themeIcon" style="font-size:18px">dark_mode</span>
-    </button>
-    <button class="logout-btn" data-vs-logout>
-      <span class="material-symbols-rounded">logout</span>
-      Sign Out
-    </button>
-  </div>
+  <button class="logout-btn" data-vs-logout>
+    <span class="material-symbols-rounded">logout</span>
+    Sign Out
+  </button>
 </div>
 
 <h1>Virtual<span>Shelf</span></h1>

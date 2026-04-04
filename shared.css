@@ -72,6 +72,11 @@ img{max-width:100%}
 .footer-links a:hover{color:var(--purple)}
 .footer-copy p{font-size:12px;color:var(--light-gray)}
 
+/* Back to home button */
+.back-home{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:var(--radius-sm);background:var(--purple);color:#fff;font-size:13px;font-weight:700;text-decoration:none;transition:.2s;border:none;cursor:pointer;font-family:var(--font);margin-bottom:20px}
+.back-home:hover{background:var(--purple-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,58,237,.3);text-decoration:none;color:#fff}
+.back-home .material-symbols-rounded{font-size:18px}
+
 /* Responsive nav */
 @media(max-width:600px){
   .top-nav{padding:12px 16px;flex-wrap:wrap;gap:10px}
