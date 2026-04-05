@@ -4,12 +4,14 @@
 
 const VS_AUTH = {
   // ---- User Database (localStorage-backed) ----
-  users: [
-    { username: 'admin',    password: 'admin123',    role: 'admin',     name: 'Emad Hamdy',    avatar: 'EH' },
-    { username: 'customer', password: 'cust123',     role: 'customer',  name: 'Ahmed K.',      avatar: 'AK' },
-    { username: 'warehouse',password: 'wh123',       role: 'warehouse', name: 'Ahmed Khalil',  avatar: 'AK' },
-    { username: 'store',    password: 'store123',    role: 'store',     name: 'Sara M.',       avatar: 'SM' },
+  users: JSON.parse(localStorage.getItem('vs_users')) || [
+    { username: 'admin',     role: 'admin',     name: 'Admin',      avatar: 'AD' },
+    { username: 'customer',  role: 'customer',  name: 'Customer',   avatar: 'CU' },
+    { username: 'warehouse', role: 'warehouse', name: 'Warehouse',  avatar: 'WH' },
+    { username: 'store',     role: 'store',     name: 'Store',      avatar: 'ST' },
   ],
+  // Passwords stored as hashes — never in plain text!
+  _passwords: JSON.parse(localStorage.getItem('vs_passwords')) || {},
 
   // Role → Allowed app path
   roleAccess: {
@@ -42,9 +44,27 @@ const VS_AUTH = {
     window.location.href = getAuthURL();
   },
 
+  // Simple hash function for client-side password storage
+  _hash(pw) {
+    let h = 0;
+    for (let i = 0; i < pw.length; i++) { h = ((h << 5) - h) + pw.charCodeAt(i); h |= 0; }
+    return 'h_' + Math.abs(h).toString(36);
+  },
+
+  setPassword(username, password) {
+    this._passwords[username] = this._hash(password);
+    localStorage.setItem('vs_passwords', JSON.stringify(this._passwords));
+  },
+
   login(username, password) {
-    const user = this.users.find(u => u.username === username && u.password === password);
+    const user = this.users.find(u => u.username === username);
     if (!user) return null;
+    // Check if password is set
+    if (!this._passwords[username]) {
+      // First time — set the password
+      this.setPassword(username, password);
+    }
+    if (this._passwords[username] !== this._hash(password)) return null;
     const session = { username: user.username, role: user.role, name: user.name, avatar: user.avatar, loginTime: Date.now() };
     this.setCurrentUser(session);
     return session;
