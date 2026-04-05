@@ -286,20 +286,8 @@ html,body{height:100%;font-family:var(--font);background:#000;display:flex;justi
 </div>
 
 <script>
-const products=[
-  {name:'Organic Whole Milk',cat:'Dairy',emoji:'🥛',stock:8},
-  {name:'Sourdough Bread',cat:'Bakery',emoji:'🍞',stock:3},
-  {name:'Free Range Eggs',cat:'Dairy',emoji:'🥚',stock:65},
-  {name:'Sparkling Water',cat:'Beverages',emoji:'💧',stock:142},
-  {name:'Avocados (3pk)',cat:'Fruits',emoji:'🥑',stock:7},
-  {name:'Greek Yogurt',cat:'Dairy',emoji:'🫙',stock:34},
-  {name:'Granola Mix',cat:'Grains',emoji:'🥣',stock:52},
-  {name:'Orange Juice',cat:'Beverages',emoji:'🍊',stock:9},
-  {name:'Potato Chips',cat:'Snacks',emoji:'🥔',stock:88},
-  {name:'Chocolate Bar',cat:'Snacks',emoji:'🍫',stock:215},
-  {name:'Butter',cat:'Dairy',emoji:'🧈',stock:41},
-  {name:'Whole Wheat Pasta',cat:'Grains',emoji:'🍝',stock:73},
-];
+// Products loaded from Supabase via VS_DB.init() at bottom of page
+let products = [];
 
 function renderProducts(){
   const el=document.getElementById('productList');
@@ -392,5 +380,17 @@ document.addEventListener('click', function initSound() {
 </script>
 <script src="../auth.js"></script>
 <script>VS_AUTH.enforce(); VS_AUTH.updateUI();</script>
+<script src="../config.js"></script>
+<script src="../vs-db.js"></script>
+<script>
+// Initialize DB and load real products
+let products = [];
+async function initStore() {
+  await VS_DB.init();
+  products = await VS_DB.getProducts();
+  renderProducts();
+}
+initStore();
+</script>
 </body>
 </html>

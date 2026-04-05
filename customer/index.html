@@ -285,24 +285,10 @@ body{align-items:flex-start;padding-top:0}
 </div>
 
 <script>
-const products=[
-  {id:1,name:'Organic Whole Milk',price:4.99,cat:'Dairy',emoji:'🥛',desc:'Premium organic whole milk from grass-fed cows. Rich in calcium and vitamin D.'},
-  {id:2,name:'Sourdough Bread',price:3.49,cat:'Bakery',emoji:'🍞',desc:'Artisan sourdough bread, freshly baked daily with natural fermentation.'},
-  {id:3,name:'Free Range Eggs',price:5.99,cat:'Dairy',emoji:'🥚',desc:'Farm fresh free-range eggs. 12 count, grade A large eggs.'},
-  {id:4,name:'Sparkling Water',price:1.99,cat:'Beverages',emoji:'💧',desc:'Natural sparkling mineral water. Zero calories, zero sugar.'},
-  {id:5,name:'Avocados (3pk)',price:4.49,cat:'Fruits',emoji:'🥑',desc:'Ripe Hass avocados, ready to eat. Perfect for guacamole or toast.'},
-  {id:6,name:'Greek Yogurt',price:3.29,cat:'Dairy',emoji:'🫙',desc:'Thick and creamy Greek yogurt. High protein, low sugar.'},
-  {id:7,name:'Granola Mix',price:6.99,cat:'Grains',emoji:'🥣',desc:'Crunchy granola with oats, almonds, honey, and dried cranberries.'},
-  {id:8,name:'Orange Juice',price:4.29,cat:'Beverages',emoji:'🍊',desc:'Fresh squeezed orange juice, no added sugar. 100% natural.'},
-  {id:9,name:'Potato Chips',price:2.99,cat:'Snacks',emoji:'🥔',desc:'Crispy potato chips with sea salt. Kettle cooked for extra crunch.'},
-  {id:10,name:'Chocolate Bar',price:2.49,cat:'Snacks',emoji:'🍫',desc:'Premium dark chocolate 72% cacao. Smooth and rich flavor.'},
-];
+// Products loaded from Supabase
+let products = [];
 
-let cart=[
-  {product:products[0],qty:2},
-  {product:products[2],qty:1},
-  {product:products[6],qty:1},
-];
+let cart = [];
 
 let currentQty=1;
 let currentProduct=products[0];
@@ -486,5 +472,34 @@ updateCartBadge();
 </script>
 <script src="../auth.js"></script>
 <script>VS_AUTH.enforce(); VS_AUTH.updateUI();</script>
+<script src="../config.js"></script>
+<script src="../vs-db.js"></script>
+<script>
+// Load products from Supabase
+async function initCustomer() {
+  await VS_DB.init();
+  products = await VS_DB.getProducts();
+  currentProduct = products[0] || {};
+  renderGrid();
+}
+initCustomer();
+
+// Real checkout
+async function checkout() {
+  if (cart.length === 0) return;
+  const subtotal = cart.reduce((s, c) => s + c.product.price * c.qty, 0);
+  await VS_DB.createOrder({
+    customer_name: 'Customer',
+    items: cart.map(c => ({ name: c.product.name, qty: c.qty, price: c.product.price })),
+    subtotal: subtotal,
+    total: subtotal,
+    payment_method: 'cash'
+  });
+  cart = [];
+  updateCartBadge();
+  showScreen('screen-home');
+  alert('Order placed successfully! ✅');
+}
+</script>
 </body>
 </html>

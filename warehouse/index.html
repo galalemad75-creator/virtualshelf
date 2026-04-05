@@ -431,5 +431,44 @@ document.addEventListener('click', function initSound() {
 </script>
 <script src="../auth.js"></script>
 <script>VS_AUTH.enforce(); VS_AUTH.updateUI();</script>
+<script src="../config.js"></script>
+<script src="../vs-db.js"></script>
+<script>
+async function initWarehouse() {
+  await VS_DB.init();
+  
+  // Load real orders for warehouse
+  const orders = await VS_DB.getOrders(20);
+  const preparing = orders.filter(o => o.status === 'pending' || o.status === 'preparing');
+  
+  // Update order cards
+  const orderContainer = document.querySelector('.orders-list, .screen-content');
+  if (orderContainer && preparing.length > 0) {
+    // Show real order count
+    const countEl = document.querySelector('.order-count, .pending-count');
+    if (countEl) countEl.textContent = preparing.length + ' pending';
+  }
+  
+  // Load real inventory
+  const products = await VS_DB.getProducts();
+  const lowStock = products.filter(p => p.stock < 10);
+  
+  // Show low stock warning
+  if (lowStock.length > 0) {
+    console.log('Low stock items:', lowStock.map(p => p.name));
+  }
+  
+  // Subscribe to new orders
+  VS_DB.subscribe('orders', (payload) => {
+    console.log('New order for warehouse:', payload);
+    initWarehouse();
+  });
+}
+initWarehouse();
+
+function updateOrderStatus(id, status) {
+  VS_DB.updateOrderStatus(id, status);
+}
+</script>
 </body>
 </html>

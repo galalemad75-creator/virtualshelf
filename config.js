@@ -1,0 +1,3 @@
+// VirtualShelf — Supabase Config
+const SUPABASE_URL = 'https://begzpqnbgroanrbicixs.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlZ3pwcW5iZ3JvYW5yYmljaXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4ODI5NDQsImV4cCI6MjA5MDQ1ODk0NH0.9xGGVm7Xrk2cftHguE0iL92CmE7C5Yk3wjeBqb7XL0c';

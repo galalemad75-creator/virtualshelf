@@ -464,5 +464,52 @@ document.addEventListener('click',function(e){
 </script>
 <script src="../auth.js"></script>
 <script>VS_AUTH.enforce(); VS_AUTH.updateUI();</script>
+<script src="../config.js"></script>
+<script src="../vs-db.js"></script>
+<script>
+async function initAdmin() {
+  await VS_DB.init();
+  
+  // Load real stats
+  const stats = await VS_DB.getStats();
+  const statEls = document.querySelectorAll('.stat-card .stat-num');
+  if (statEls[0]) statEls[0].textContent = '$' + (stats.revenue || 0).toFixed(0);
+  if (statEls[1]) statEls[1].textContent = stats.totalOrders || 0;
+  if (statEls[2]) statEls[2].textContent = stats.totalProducts || 0;
+  if (statEls[3]) statEls[3].textContent = stats.lowStock || 0;
+  
+  // Load real orders
+  const orders = await VS_DB.getOrders(10);
+  if (orders.length > 0) {
+    const tbody = document.querySelector('.orders-table tbody');
+    if (tbody) {
+      tbody.innerHTML = orders.map(o => `
+        <tr>
+          <td class="oid">${o.order_number}</td>
+          <td class="customer">${o.customer_name || 'Walk-in'}</td>
+          <td>${(o.items || []).length} items</td>
+          <td class="total">$${(o.total || 0).toFixed(2)}</td>
+          <td><span class="status-badge ${o.status}">${o.status}</span></td>
+          <td>${new Date(o.created_at).toLocaleTimeString()}</td>
+        </tr>
+      `).join('');
+    }
+  }
+  
+  // Load real alerts
+  const alerts = await VS_DB.getAlerts();
+  const alertContainer = document.querySelector('.warning-banner');
+  if (alertContainer && alerts.length > 0) {
+    alertContainer.innerHTML = '⚠️ ' + alerts.length + ' alerts: ' + alerts.map(a => a.message).join(', ');
+  }
+  
+  // Subscribe to realtime updates
+  VS_DB.subscribe('orders', (payload) => {
+    console.log('New order:', payload);
+    initAdmin(); // Refresh
+  });
+}
+initAdmin();
+</script>
 </body>
 </html>
