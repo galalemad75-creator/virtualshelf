@@ -56,6 +56,11 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
 .login-btn{width:100%;background:var(--purple);color:#fff;border:none;border-radius:var(--radius-sm);padding:14px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
 .login-btn:hover{background:var(--purple-hover);transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.4)}
 .login-btn:active{transform:translateY(0)}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.login-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.login-btn.loading .spinner{display:block}
+.login-btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* Forgot Password Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:20px}
@@ -72,6 +77,13 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
 .btn-send{background:var(--purple);color:#fff}
 .btn-send:hover{background:var(--purple-hover)}
 .btn-ok{width:100%;padding:12px;border-radius:var(--radius-sm);background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;margin-top:8px}
+
+/* Connection Status */
+.conn-status{text-align:center;margin-bottom:12px;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}
+.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.conn-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+.conn-dot.offline{background:var(--orange);box-shadow:0 0 6px var(--orange)}
+.conn-text{color:var(--gray)}
 
 .quick-access{margin-top:28px;text-align:center}
 .quick-access p{font-size:12px;color:var(--gray);margin-bottom:14px;font-weight:600}
@@ -99,6 +111,12 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
   <div class="login-card">
     <h2>Welcome Back</h2>
     <p class="subtitle">Sign in to your account to continue</p>
+
+    <!-- Connection Status -->
+    <div class="conn-status" id="connStatus">
+      <span class="conn-dot offline" id="connDot"></span>
+      <span class="conn-text" id="connText">Connecting to database...</span>
+    </div>
 
     <div class="error-msg" id="errorMsg">
       <span class="material-symbols-rounded">error</span>
@@ -131,8 +149,11 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
         <a onclick="showForgotModal()">Forgot Password?</a>
       </div>
       <button type="submit" class="login-btn" id="loginBtn">
-        <span class="material-symbols-rounded">login</span>
-        Sign In
+        <div class="spinner"></div>
+        <span class="btn-text">
+          <span class="material-symbols-rounded">login</span>
+          Sign In
+        </span>
       </button>
     </form>
 
@@ -142,13 +163,13 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
         <div class="role-chip admin" onclick="quickLogin('admin','admin123')">
           <span class="material-symbols-rounded">admin_panel_settings</span> Admin
         </div>
-        <div class="role-chip customer" onclick="quickLogin('customer','cust123')">
+        <div class="role-chip customer" onclick="quickLogin('customer','admin123')">
           <span class="material-symbols-rounded">shopping_cart</span> Customer
         </div>
-        <div class="role-chip warehouse" onclick="quickLogin('warehouse','wh123')">
+        <div class="role-chip warehouse" onclick="quickLogin('warehouse','admin123')">
           <span class="material-symbols-rounded">warehouse</span> Warehouse
         </div>
-        <div class="role-chip store" onclick="quickLogin('store','store123')">
+        <div class="role-chip store" onclick="quickLogin('store','admin123')">
           <span class="material-symbols-rounded">store</span> Store
         </div>
       </div>
@@ -189,10 +210,26 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
   <p style="font-size:11px;color:var(--light-gray)">&copy; 2026 VirtualShelf. All rights reserved.</p>
 </div>
 
+<script src="config.js"></script>
 <script src="theme.js"></script>
 <script src="auth.js"></script>
 <script>
-(function(){
+(async function(){
+  // Initialize auth system (connect to Supabase)
+  await VS_AUTH.init();
+
+  // Update connection status
+  const dot = document.getElementById('connDot');
+  const text = document.getElementById('connText');
+  if (VS_AUTH.ready) {
+    dot.className = 'conn-dot online';
+    text.textContent = 'Connected to database';
+  } else {
+    dot.className = 'conn-dot offline';
+    text.textContent = 'Offline mode (localStorage)';
+  }
+
+  // Check if already logged in
   const user = VS_AUTH.getCurrentUser();
   if(user){
     const basePath = window.location.pathname.replace(/auth\.html$/, '');
@@ -221,24 +258,55 @@ function showSuccess(msg){
   setTimeout(()=> el.classList.remove('show'), 4000);
 }
 
-function handleLogin(e){
+async function handleLogin(e){
   e.preventDefault();
+  const btn = document.getElementById('loginBtn');
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
-  if(!username || !password){ showError('Please enter both username and password'); return; }
-  const user = VS_AUTH.login(username, password);
-  if(!user){ showError('Invalid username or password'); return; }
-  const basePath = window.location.pathname.replace(/auth\.html$/, '');
-  window.location.href = basePath + VS_AUTH.roleHome[user.role];
-}
 
-function quickLogin(username, password){
-  document.getElementById('username').value = username;
-  document.getElementById('password').value = password;
-  const user = VS_AUTH.login(username, password);
-  if(user){
+  if(!username || !password){ showError('Please enter both username and password'); return; }
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const user = await VS_AUTH.login(username, password);
+    if(!user){
+      showError('Invalid username or password');
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      return;
+    }
     const basePath = window.location.pathname.replace(/auth\.html$/, '');
     window.location.href = basePath + VS_AUTH.roleHome[user.role];
+  } catch(err) {
+    showError('Connection error. Please try again.');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+async function quickLogin(username, password){
+  document.getElementById('username').value = username;
+  document.getElementById('password').value = password;
+  const btn = document.getElementById('loginBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const user = await VS_AUTH.login(username, password);
+    if(user){
+      const basePath = window.location.pathname.replace(/auth\.html$/, '');
+      window.location.href = basePath + VS_AUTH.roleHome[user.role];
+    } else {
+      showError('Login failed');
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  } catch(err) {
+    showError('Connection error');
+    btn.classList.remove('loading');
+    btn.disabled = false;
   }
 }
 
@@ -254,7 +322,6 @@ function closeForgotModal(){
 function sendResetLink(){
   const email = document.getElementById('resetEmail').value.trim();
   if(!email || !email.includes('@')){ alert('Please enter a valid email address'); return; }
-  // Simulate sending (demo - no real backend)
   document.getElementById('sentToEmail').textContent = email;
   document.getElementById('forgotForm').style.display='none';
   document.getElementById('forgotSuccess').style.display='block';
