@@ -256,7 +256,7 @@ body{align-items:flex-start;padding-top:0}
       <div class="summary-row"><span>Delivery</span><span style="color:var(--green)">Free</span></div>
       <div class="summary-row"><span>Offers</span><span style="color:var(--orange)">-$2.50</span></div>
       <div class="summary-row total"><span>Total</span><span id="total">$0.00</span></div>
-      <button class="checkout-btn" onclick="showScreen('screen-confirm')">Checkout</button>
+      <button class="checkout-btn" onclick="doCheckout()">Checkout</button>
     </div>
   </div>
 
@@ -267,10 +267,10 @@ body{align-items:flex-start;padding-top:0}
     <p class="confirm-sub">Your order is being prepared</p>
     <div class="qr-card">
       <div class="qr-placeholder">
-        <div class="qr-grid" id="qrGrid"></div>
+        <div class="qr-grid" id="qrGrid" data-order=""></div>
       </div>
     </div>
-    <div class="order-num">Order #<strong>VS-0042</strong></div>
+    <div class="order-num">Order #<strong id="orderNum">---</strong></div>
     <div class="eta"><span class="material-symbols-rounded">schedule</span>Estimated ready: 12 mins</div>
   </div>
 </div>
@@ -383,65 +383,7 @@ function cartQty(i,d){
   renderCart();
 }
 
-function generateQR(){
-  const g=document.getElementById('qrGrid');
-  let html='';
-  // Create a realistic QR-like pattern with proper finder patterns
-  const size=21; // QR version 1 = 21x21
-  const grid=[];
-  // Initialize grid
-  for(let r=0;r<size;r++){grid[r]=[];for(let c=0;c<size;c++)grid[r][c]=false;}
-  
-  // Draw finder pattern (7x7 square with inner pattern)
-  function drawFinder(r0,c0){
-    for(let r=0;r<7;r++)for(let c=0;c<7;c++){
-      const isBorder=r===0||r===6||c===0||c===6;
-      const isInner=r>=2&&r<=4&&c>=2&&c<=4;
-      grid[r0+r][c0+c]=isBorder||isInner;
-    }
-  }
-  // Three finder patterns (top-left, top-right, bottom-left)
-  drawFinder(0,0);
-  drawFinder(0,size-7);
-  drawFinder(size-7,0);
-  
-  // Timing patterns
-  for(let i=8;i<size-8;i++){grid[6][i]=i%2===0;grid[i][6]=i%2===0;}
-  
-  // Alignment pattern (center area for version 1+)
-  if(size>=25){
-    for(let r=-2;r<=2;r++)for(let c=-2;c<=2;c++){
-      const ar=16+r,ac=16+c;
-      if(ar>=0&&ar<size&&ac>=0&&ac<size)
-        grid[ar][ac]=Math.abs(r)===2||Math.abs(c)===2||(r===0&&c===0);
-    }
-  }
-  
-  // Data modules (pseudo-random but consistent)
-  const seed=Date.now()%1000;
-  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
-    if(!grid[r][c] && !(r<8&&c<8) && !(r<8&&c>=size-8) && !(r>=size-8&&c<8)){
-      grid[r][c]=((r*7+c*13+seed)%3)===0;
-    }
-  }
-  
-  // Render with CSS grid scaled to fit 160px
-  const cellSize=160/size;
-  g.style.display='grid';
-  g.style.gridTemplateColumns=`repeat(${size},${cellSize}px)`;
-  g.style.gridTemplateRows=`repeat(${size},${cellSize}px)`;
-  g.style.width='160px';
-  g.style.height='160px';
-  g.style.gap='0';
-  
-  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
-    const d=document.createElement('div');
-    d.style.width=cellSize+'px';
-    d.style.height=cellSize+'px';
-    d.style.background=grid[r][c]?'#000':'#fff';
-    d.style.borderRadius='0';
-    g.appendChild(d);
-  }
+
 }
 
 function showScreen(id){
@@ -452,7 +394,7 @@ function showScreen(id){
   const target=document.getElementById(id);
   target.classList.remove('hidden');
   if(id==='screen-cart')renderCart();
-  if(id==='screen-confirm')generateQR();
+  if(id==='screen-confirm')generateQR(document.getElementById('orderNum').textContent);
   // Update demo nav
   document.querySelectorAll('.demo-nav button').forEach((b,i)=>{
     b.classList.toggle('active-demo',['screen-home','screen-scanner','screen-detail','screen-cart','screen-confirm'][i]===id);
@@ -485,20 +427,92 @@ async function initCustomer() {
 initCustomer();
 
 // Real checkout
-async function checkout() {
-  if (cart.length === 0) return;
-  const subtotal = cart.reduce((s, c) => s + c.product.price * c.qty, 0);
-  await VS_DB.createOrder({
-    customer_name: 'Customer',
-    items: cart.map(c => ({ name: c.product.name, qty: c.qty, price: c.product.price })),
-    subtotal: subtotal,
-    total: subtotal,
-    payment_method: 'cash'
-  });
-  cart = [];
-  updateCartBadge();
-  showScreen('screen-home');
-  alert('Order placed successfully! ✅');
+// Generate QR code seeded by order number
+function generateQR(orderNum){
+  const g=document.getElementById('qrGrid');
+  // Seed from order number for consistent unique pattern
+  let seed = 0;
+  const s = orderNum || 'VS-0000';
+  for(let i=0;i<s.length;i++) seed = seed*31 + s.charCodeAt(i);
+  const size=21;
+  const grid=[];
+  for(let r=0;r<size;r++){grid[r]=[];for(let c=0;c<size;c++)grid[r][c]=false;}
+
+  function drawFinder(r0,c0){
+    for(let r=0;r<7;r++)for(let c=0;c<7;c++){
+      const isBorder=r===0||r===6||c===0||c===6;
+      const isInner=r>=2&&r<=4&&c>=2&&c<=4;
+      grid[r0+r][c0+c]=isBorder||isInner;
+    }
+  }
+  drawFinder(0,0);
+  drawFinder(0,size-7);
+  drawFinder(size-7,0);
+
+  for(let i=8;i<size-8;i++){grid[6][i]=i%2===0;grid[i][6]=i%2===0;}
+
+  // Data modules seeded by order number
+  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
+    if(!grid[r][c] && !(r<8&&c<8) && !(r<8&&c>=size-8) && !(r>=size-8&&c<8)){
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      grid[r][c]=(seed % 3) === 0;
+    }
+  }
+
+  const cellSize=160/size;
+  g.style.display='grid';
+  g.style.gridTemplateColumns=`repeat(${size},${cellSize}px)`;
+  g.style.gridTemplateRows=`repeat(${size},${cellSize}px)`;
+  g.style.width='160px';
+  g.style.height='160px';
+  g.style.gap='0';
+  g.innerHTML='';
+  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
+    const d=document.createElement('div');
+    d.style.width=cellSize+'px';
+    d.style.height=cellSize+'px';
+    d.style.background=grid[r][c]?'#000':'#fff';
+    g.appendChild(d);
+  }
+}
+
+// Main checkout function
+async function doCheckout() {
+  if (cart.length === 0) { alert('Cart is empty!'); return; }
+  
+  const btn = document.querySelector('.checkout-btn');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+  
+  try {
+    const subtotal = cart.reduce((s, c) => s + c.product.price * c.qty, 0);
+    const order = await VS_DB.createOrder({
+      customer_name: VS_AUTH.getCurrentUser()?.name || 'Customer',
+      items: cart.map(c => ({ name: c.product.name, qty: c.qty, price: c.product.price })),
+      subtotal: subtotal,
+      total: subtotal,
+      payment_method: 'cash'
+    });
+    
+    // Update confirm screen with real order data
+    const orderNum = order?.order_number || 'VS-' + String(Date.now()).slice(-4);
+    document.getElementById('orderNum').textContent = orderNum;
+    
+    // Generate unique QR for this order
+    generateQR(orderNum);
+    
+    // Clear cart and show confirmation
+    cart = [];
+    updateCartBadge();
+    showScreen('screen-confirm');
+    
+  } catch(err) {
+    console.error('Checkout failed:', err);
+    alert('Order failed. Please try again.');
+  }
+  
+  btn.disabled = false;
+  btn.textContent = 'Checkout';
 }
 </script>
 </body>
