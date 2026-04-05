@@ -1,5 +1,5 @@
 /**
- * VirtualShelf — Shared Database Service
+ * VirtualShelf — Shared Database Service (v2 — Supabase with RLS)
  * All 4 apps (admin, customer, warehouse, store) use this
  */
 const VS_DB = {
@@ -23,8 +23,17 @@ const VS_DB = {
     }
   },
 
+  // ---- Set role header for RLS policies ----
+  _setRoleHeader() {
+    const user = VS_AUTH.getCurrentUser();
+    if (!user || !this.supa) return;
+    // PostgREST exposes custom headers as current_setting('request.headers')
+    this.supa.rest.headers['vs-role'] = user.role;
+  },
+
   // ===== PRODUCTS =====
   async getProducts() {
+    this._setRoleHeader();
     if (!this.ready) return JSON.parse(localStorage.getItem('vs_products') || '[]');
     const { data } = await this.supa.from('vs_products').select('*').eq('is_active', true).order('name');
     if (data) localStorage.setItem('vs_products', JSON.stringify(data));
@@ -32,23 +41,27 @@ const VS_DB = {
   },
 
   async updateStock(id, stock) {
+    this._setRoleHeader();
     if (!this.ready) return;
     await this.supa.from('vs_products').update({ stock, updated_at: new Date().toISOString() }).eq('id', id);
   },
 
   async addProduct(product) {
+    this._setRoleHeader();
     if (!this.ready) return;
     const { data } = await this.supa.from('vs_products').insert(product).select().single();
     return data;
   },
 
   async deleteProduct(id) {
+    this._setRoleHeader();
     if (!this.ready) return;
     await this.supa.from('vs_products').update({ is_active: false }).eq('id', id);
   },
 
   // ===== ORDERS =====
   async getOrders(limit = 50) {
+    this._setRoleHeader();
     if (!this.ready) return JSON.parse(localStorage.getItem('vs_orders') || '[]');
     const { data } = await this.supa.from('vs_orders').select('*').order('created_at', { ascending: false }).limit(limit);
     if (data) localStorage.setItem('vs_orders', JSON.stringify(data));
@@ -56,6 +69,7 @@ const VS_DB = {
   },
 
   async createOrder(order) {
+    this._setRoleHeader();
     const orderNum = 'VS-' + String(Date.now()).slice(-4);
     const newOrder = { order_number: orderNum, ...order, status: 'pending' };
     if (!this.ready) {
@@ -73,17 +87,20 @@ const VS_DB = {
   },
 
   async updateOrderStatus(id, status) {
+    this._setRoleHeader();
     if (!this.ready) return;
     await this.supa.from('vs_orders').update({ status, updated_at: new Date().toISOString() }).eq('id', id);
   },
 
   // ===== INVENTORY =====
   async logInventory(product_id, action, quantity, notes = '') {
+    this._setRoleHeader();
     if (!this.ready) return;
     await this.supa.from('vs_inventory_log').insert({ product_id, action, quantity, notes });
   },
 
   async getInventoryLog(limit = 50) {
+    this._setRoleHeader();
     if (!this.ready) return [];
     const { data } = await this.supa.from('vs_inventory_log').select('*, product:vs_products(name, emoji)').order('created_at', { ascending: false }).limit(limit);
     return data || [];
@@ -91,18 +108,21 @@ const VS_DB = {
 
   // ===== ALERTS =====
   async getAlerts() {
+    this._setRoleHeader();
     if (!this.ready) return [];
     const { data } = await this.supa.from('vs_alerts').select('*, product:vs_products(name, emoji)').eq('is_read', false).order('created_at', { ascending: false });
     return data || [];
   },
 
   async dismissAlert(id) {
+    this._setRoleHeader();
     if (!this.ready) return;
     await this.supa.from('vs_alerts').update({ is_read: true }).eq('id', id);
   },
 
   // ===== STATS =====
   async getStats() {
+    this._setRoleHeader();
     if (!this.ready) return { totalProducts: 0, totalOrders: 0, revenue: 0, lowStock: 0 };
     const [products, orders] = await Promise.all([
       this.supa.from('vs_products').select('id, stock', { count: 'exact' }).eq('is_active', true),
